@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070b1f">
+  <title>Solta a Voz · Karaokê</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body class="cel inicio">
+  <div class="brilho b1"></div>
+  <div class="brilho b2"></div>
+  <main>
+    <div class="marca">Solta a Voz</div>
+    <p>Karaokê com a letra na TV e o celular de microfone. No fim, cada um recebe uma nota.</p>
+    <div class="cartao">
+      <h2>Na TV</h2>
+      <p>Abra esta página no navegador da TV e toque em:</p>
+      <a class="botao" href="tv.html">Abrir o palco na TV</a>
+    </div>
+    <div class="cartao">
+      <h2>No celular</h2>
+      <p>Leia o QR code da TV ou digite o código da sala:</p>
+      <form id="form" class="linha-input">
+        <input id="cod" class="campo" maxlength="5" placeholder="ABCDE" autocomplete="off" style="text-transform:uppercase;letter-spacing:.2em;font-weight:800">
+        <button class="botao mini" type="submit">Entrar</button>
+      </form>
+    </div>
+    <p style="font-size:13px">As letras vêm do <a href="https://lrclib.net" style="color:var(--ciano)">LRCLIB</a> e o som de vídeos do YouTube. Nada disso fica guardado aqui.</p>
+  </main>
+  <script>
+    document.getElementById('form').onsubmit = function (e) {
+      e.preventDefault();
+      var c = document.getElementById('cod').value.trim().toUpperCase();
+      if (/^[A-Z0-9]{5}$/.test(c)) location.href = 'celular.html?sala=' + c;
+    };
+  </script>
+</body>
+</html>

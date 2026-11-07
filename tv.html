@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solta a Voz · TV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body class="tv">
+  <div class="brilho b1"></div>
+  <div class="brilho b2"></div>
+
+  <header class="topo">
+    <div class="marca">Solta a Voz</div>
+    <div class="faixa-musica" id="faixaMusica"></div>
+    <div class="chip" id="chipSala"></div>
+  </header>
+
+  <main class="palco">
+    <section class="coluna-letra">
+      <div class="letra" id="letra"></div>
+      <div class="cartao grafico">
+        <div class="rotulo">Tom da voz</div>
+        <canvas id="grafico"></canvas>
+      </div>
+    </section>
+    <aside class="coluna-lado">
+      <div class="cartao video"><div id="video"></div></div>
+      <div id="cantores" class="cantores"></div>
+    </aside>
+  </main>
+
+  <div id="telaSala" class="overlay">
+    <div class="caixa">
+      <div class="marca grande">Solta a Voz</div>
+      <p class="sub">Karaokê na TV · o celular é o microfone</p>
+      <div class="sala-linha">
+        <div class="qr" id="qr"></div>
+        <div class="sala-info">
+          <div class="rotulo">Aponte a câmera do celular ou abra</div>
+          <div class="link" id="link"></div>
+          <div class="rotulo">Código da sala</div>
+          <div class="codigo" id="codigo"></div>
+          <div id="listaJog" class="lista-jog"></div>
+          <div class="dica" id="dicaSala"></div>
+        </div>
+      </div>
+      <button id="telaCheia" class="btn-tv">Tela cheia</button>
+    </div>
+  </div>
+
+  <div id="telaContagem" class="overlay hidden">
+    <div class="contagem" id="contagem">3</div>
+    <div class="sub" id="contagemMusica"></div>
+  </div>
+
+  <div id="telaTocar" class="overlay hidden">
+    <div class="caixa centro">
+      <p class="sub">A TV precisa de um toque para tocar o som.</p>
+      <button id="btnTocar" class="btn-tocar">▶ Tocar a música</button>
+      <p class="dica">Aperte OK no controle da TV.</p>
+    </div>
+  </div>
+
+  <div id="telaFim" class="overlay hidden">
+    <div class="caixa">
+      <div class="marca">Resultado</div>
+      <p class="sub" id="fimMusica"></p>
+      <div id="podio" class="podio"></div>
+      <p class="dica">No celular: escolha a próxima música.</p>
+    </div>
+  </div>
+
+  <div id="aviso" class="aviso hidden"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/comum.js"></script>
+  <script src="js/tv.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>
