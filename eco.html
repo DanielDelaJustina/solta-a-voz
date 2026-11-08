@@ -27,10 +27,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@rive-app/canvas@2.45.0/rive.js"></script>
   <script src="js/eco.js"></script>
   <script>
-    var status = document.getElementById('statusEco');
-    status.textContent = window.rive ? 'Carregando o Eco…' : 'O Rive não carregou neste navegador.';
+    var avisoEco = document.getElementById('statusEco');
+    avisoEco.textContent = window.rive ? 'Carregando o Eco…' : 'O Rive não carregou neste navegador.';
     var eco = ECO.criar(document.getElementById('eco'), function (ok) {
-      status.textContent = ok ? 'Rive funcionando neste navegador ✔' : 'O Rive não conseguiu abrir o Eco neste navegador.';
+      avisoEco.textContent = ok ? 'Rive funcionando neste navegador ✔' : 'O Rive não conseguiu abrir o Eco neste navegador.';
     });
     var nomes = [['normal', 'Normal'], ['esperando', 'Vem cantar!'], ['animado', 'Tá mandando bem!'], ['desafinado', 'Quase lá! Ajusta o tom!'], ['astro', 'Nível Astro!'], ['procurando', 'Cadê você?']];
     var html = '';
