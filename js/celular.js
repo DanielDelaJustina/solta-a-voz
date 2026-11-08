@@ -213,7 +213,8 @@
               var dif = Math.abs(dur - m.dur);
               return {
                 id: it.id, titulo: it.snippet.title, canal: it.snippet.channelTitle, dur: dur, vistas: vistas, perto: dif <= 12,
-                nota: Math.log(vistas + 1) / Math.LN10 + (karaoke ? 2 : 0) - Math.min(4, dif / 8),
+                // karaokê vale mais que muitas visualizações: o clipe original tem a voz do cantor
+                nota: Math.log(vistas + 1) / Math.LN10 + (karaoke ? 3 : /clipe|oficial|official|ao vivo|live/i.test(it.snippet.title) ? -1 : 0) - Math.min(4, dif / 8),
               };
             }).sort(function (a, b) { return b.nota - a.nota; }).slice(0, 5);
           });
