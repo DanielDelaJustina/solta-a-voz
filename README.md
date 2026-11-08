@@ -9,7 +9,7 @@ Site: https://danieldelajustina.github.io/solta-a-voz/
 1. Na TV, abra o site e toque em **Abrir o palco na TV** (`tv.html`).
 2. No celular, leia o QR code (ou digite o código da sala) e entre com seu nome. Até 4 pessoas cantam juntas.
 3. Toque no microfone para ligá-lo. O site precisa de permissão para usar o microfone.
-4. Quem entrou primeiro escolhe a música: busca pelo nome, abre o YouTube para achar uma versão karaokê e cola o link.
+4. Quem entrou primeiro escolhe a música: busca pelo nome e o celular sugere o vídeo do YouTube mais visto com a duração da letra (a versão com o cantor, para cantar junto). Dá para escolher outro ou colar um link.
 5. Durante a música, ele pode pausar, terminar e ajustar o tempo da letra ("Letra antes" / "Letra depois").
 
 ## Eco, o mascote

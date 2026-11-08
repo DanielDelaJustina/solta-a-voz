@@ -191,12 +191,12 @@
     if (n >= 1e3) return Math.round(n / 1e3) + ' mil';
     return String(n);
   }
-  // procura versões karaokê e põe na frente a mais vista que tem a duração da letra
+  // procura a música e põe na frente o vídeo mais visto com a duração da letra (versão com o cantor, para cantar junto)
   function buscarVideos(m) {
     var yt = 'https://www.googleapis.com/youtube/v3/';
     busca.videos = 'carregando';
     busca.videoSel = 0;
-    var q = m.artista + ' ' + m.titulo + ' karaoke';
+    var q = m.artista + ' ' + m.titulo;
     fetch(yt + 'search?part=snippet&type=video&videoEmbeddable=true&maxResults=12&q=' + encodeURIComponent(q) + '&key=' + KA.YT_KEY)
       .then(function (r) { return r.json(); })
       .then(function (d) {
@@ -213,8 +213,8 @@
               var dif = Math.abs(dur - m.dur);
               return {
                 id: it.id, titulo: it.snippet.title, canal: it.snippet.channelTitle, dur: dur, vistas: vistas, perto: dif <= 12,
-                // karaokê vale mais que muitas visualizações: o clipe original tem a voz do cantor
-                nota: Math.log(vistas + 1) / Math.LN10 + (karaoke ? 3 : /clipe|oficial|official|ao vivo|live/i.test(it.snippet.title) ? -1 : 0) - Math.min(4, dif / 8),
+                // a gente canta junto com o cantor: versão karaokê fica só como alternativa
+                nota: Math.log(vistas + 1) / Math.LN10 - (karaoke ? 1 : 0) - Math.min(4, dif / 8),
               };
             }).sort(function (a, b) { return b.nota - a.nota; }).slice(0, 5);
           });
@@ -236,7 +236,7 @@
   }
   function listaVideos() {
     var v = busca.videos;
-    if (v === 'carregando') return '<p class="dica">Procurando o melhor vídeo de karaokê…</p>';
+    if (v === 'carregando') return '<p class="dica">Procurando o melhor vídeo da música…</p>';
     if (!v || !v.length) return '<p class="dica">Não achei um vídeo sozinho. Use o link abaixo.</p>';
     var html = '<div class="rotulo">Vídeo sugerido: muito visto e com a duração da letra</div>';
     v.forEach(function (x, i) {
@@ -258,11 +258,11 @@
     var html = '';
     if (busca.escolhida) {
       var m = busca.escolhida;
-      var q = encodeURIComponent(m.artista + ' ' + m.titulo + ' karaoke');
+      var q = encodeURIComponent(m.artista + ' ' + m.titulo);
       html += '<div class="cartao escolhida"><div class="rotulo">Música</div><div class="t">' + esc(m.titulo) + '</div><div class="a">' + esc(m.artista) + ' · ' + KA.mmss(m.dur) + '</div></div>';
       var auto = !!KA.YT_KEY;
       if (auto) html += listaVideos() + '<button class="botao" data-op="cantar">Cantar!</button><details class="outro-video"><summary>Usar outro vídeo</summary>';
-      html += '<div class="passo"><b>1.</b> Ache um vídeo de karaokê (sem a voz do cantor), de preferência com <b>' + KA.mmss(m.dur) + '</b> de duração.</div>' +
+      html += '<div class="passo"><b>1.</b> Ache o vídeo da música, de preferência com <b>' + KA.mmss(m.dur) + '</b> de duração.</div>' +
         '<a class="botao sec" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=' + q + '">Procurar no YouTube</a>' +
         '<div class="passo"><b>2.</b> No YouTube, toque em Compartilhar → Copiar link e cole aqui:</div>' +
         '<div class="linha-input"><input id="linkVideo" class="campo" placeholder="https://youtu.be/..." value="' + esc(auto ? '' : m.video || '') + '" autocomplete="off">' +
