@@ -81,7 +81,7 @@
   }
 
   // chave da YouTube Data API (só funciona no site do Solta a Voz e no localhost); vazia = colar o link na mão
-  var YT_KEY = '';
+  var YT_KEY = 'AIzaSyAfUMGrk6Cjs_1A-iYc3qkuPu9iJHG5YHg';
 
   window.KA = { YT_KEY: YT_KEY, CORES: CORES, esc: esc, ls: ls, novoCodigo: novoCodigo, mmss: mmss, lerLRC: lerLRC, idDoVideo: idDoVideo, elogio: elogio, titulo: titulo };
 })();

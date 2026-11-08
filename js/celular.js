@@ -237,7 +237,7 @@
     var v = busca.videos;
     if (v === 'carregando') return '<p class="dica">Procurando o melhor vídeo de karaokê…</p>';
     if (!v || !v.length) return '<p class="dica">Não achei um vídeo sozinho. Use o link abaixo.</p>';
-    var html = '<div class="rotulo">Vídeo (escolhi o mais visto com a duração certa)</div>';
+    var html = '<div class="rotulo">Vídeo sugerido: muito visto e com a duração da letra</div>';
     v.forEach(function (x, i) {
       html += '<button class="video-item' + (i === busca.videoSel ? ' sel' : '') + '" data-op="video" data-i="' + i + '">' +
         '<img src="https://i.ytimg.com/vi/' + x.id + '/mqdefault.jpg" alt="" loading="lazy">' +
