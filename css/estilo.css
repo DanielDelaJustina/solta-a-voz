@@ -238,7 +238,74 @@ button { font-family: inherit; }
 .inicio h2 { margin: 0; font-size: 19px; }
 .inicio p { margin: 0; color: var(--suave); line-height: 1.45; }
 
-/* Eco, o mascote */
-.eco-vitrine { width: 100%; max-width: 360px; aspect-ratio: 1; margin: 0 auto; display: block; }
+/* ================= Eco, o mascote (SVG) =================
+   h0 normal · h1 esperando · h2 animado · h3 desafinado · h4 astro · h5 procurando
+   As origens das transformações estão nas coordenadas do desenho (centro do Eco = 0,0). */
+.eco { display: block; width: 100%; height: 100%; overflow: visible; }
+.eco .eco-corpo { transform-origin: 0 150px; animation: eco-bob 2s ease-in-out infinite; }
+.eco .eco-olhos { transform-origin: 0 -34px; animation: eco-pisca 4s infinite; transition: opacity 0.2s; }
+.eco .eco-pupila { transition: transform 0.3s; }
+.eco .eco-fechados, .eco .eco-sobrancelhas, .eco .eco-oculos, .eco .eco-gota, .eco .eco-notas, .eco .eco-brilhos { opacity: 0; transition: opacity 0.25s; }
+.eco .eco-mao { opacity: 0; transition: opacity 0.2s, transform 0.3s cubic-bezier(0.3, 1.5, 0.6, 1); }
+.eco .eco-mao-e { transform-origin: -165px 70px; }
+.eco .eco-mao-d { transform-origin: 165px 70px; }
+.eco .eco-notas, .eco .eco-brilhos { transform-origin: 0 -60px; }
+.eco .eco-aura stop { transition: stop-color 0.3s; }
+
+/* 1 esperando: olhos fechados, balança devagar */
+.eco.h1 .eco-olhos { opacity: 0; }
+.eco.h1 .eco-fechados { opacity: 1; }
+.eco.h1 .eco-corpo { animation: eco-balanca 3s ease-in-out infinite; }
+/* 2 animado: pula, notas voando, aura verde */
+.eco.h2 .eco-corpo { animation: eco-pulo 0.5s ease-in-out infinite; }
+.eco.h2 .eco-notas { opacity: 1; animation: eco-flutua 1s ease-in-out infinite; }
+.eco.h2 .eco-aura stop { stop-color: #a3e635; }
+/* 3 desafinado: mãos nos ouvidos, sobrancelha preocupada, suor, tremendo, aura laranja */
+.eco.h3 .eco-mao { opacity: 1; }
+.eco.h3 .eco-mao-e { transform: translate(33px, -104px) rotate(12deg); }
+.eco.h3 .eco-mao-d { transform: translate(-33px, -104px) rotate(-12deg); }
+.eco.h3 .eco-sobrancelhas { opacity: 1; }
+.eco .eco-careta { opacity: 0; }
+.eco.h3 .eco-boca { opacity: 0; }
+.eco.h3 .eco-careta { opacity: 1; }
+.eco.h3 .eco-gota { opacity: 1; animation: eco-suor 1s ease-in infinite; }
+.eco.h3 .eco-olhos { animation: none; transform: scaleY(0.6); }
+.eco.h3 .eco-corpo { animation: eco-treme 1s linear infinite; }
+.eco.h3 .eco-aura stop { stop-color: #fb923c; }
+/* 4 astro: óculos de estrela, brilhos, aura rosa */
+.eco.h4 .eco-oculos { opacity: 1; }
+.eco.h4 .eco-brilhos { opacity: 1; animation: eco-cintila 1.2s ease-in-out infinite; }
+.eco.h4 .eco-corpo { animation: eco-pulo 0.6s ease-in-out infinite; }
+.eco.h4 .eco-aura stop { stop-color: #e879f9; }
+/* 5 procurando: olhos para os lados */
+.eco.h5 .eco-pupila { animation: eco-olha 2s ease-in-out infinite; }
+.eco.h5 .eco-corpo { animation: eco-gira 2s ease-in-out infinite; }
+
+@keyframes eco-bob { 50% { transform: translateY(-8px); } }
+@keyframes eco-pisca { 0%, 88%, 100% { transform: scaleY(1); } 92% { transform: scaleY(0.1); } }
+@keyframes eco-balanca { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg) translateY(-4px); } }
+@keyframes eco-pulo { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
+@keyframes eco-flutua { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
+@keyframes eco-treme { 0%, 30%, 100% { transform: translateX(0); } 6% { transform: translateX(-6px); } 12% { transform: translateX(6px); } 18% { transform: translateX(-4px); } 24% { transform: translateX(3px); } }
+@keyframes eco-suor { 0% { transform: translateY(-4px); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(18px); opacity: 0; } }
+@keyframes eco-cintila { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.14) rotate(6deg); } }
+@keyframes eco-olha { 0%, 100% { transform: translateX(0); } 20%, 45% { transform: translateX(-11px); } 65%, 90% { transform: translateX(11px); } }
+@keyframes eco-gira { 0%, 100% { transform: rotate(0); } 20%, 45% { transform: rotate(-5deg); } 65%, 90% { transform: rotate(5deg); } }
+
+/* Eco no celular, no lugar da bola */
+.orbe-area { flex-direction: column; align-items: center; gap: 4px; padding-top: 6px; }
+.eco-cel { width: 240px; height: 240px; }
+.nota-chip { color: var(--texto); font-weight: 800; font-size: 22px; min-height: 30px; }
+.nota-chip.ligar { font-size: 16px; color: var(--ciano); background: rgba(34, 211, 238, 0.12); border: 1px solid rgba(34, 211, 238, 0.35); border-radius: 999px; padding: 6px 16px; }
+
+/* Eco na TV: no cartão de cada cantor e no resultado */
+.cantor { display: flex; align-items: center; gap: 0.8vw; padding-left: 0.4vw; }
+.cantor-eco { width: 7.5vw; height: 7.5vw; flex-shrink: 0; margin: -0.8vw 0; }
+.cantor-info { flex: 1; min-width: 0; }
+.eco-sala { width: 13vw; height: 13vw; margin: -2vw auto -1.4vw; }
+.lugar-eco { width: 12vw; height: 12vw; margin: -5vw auto 0.2vw; }
+
+/* vitrine */
+.eco-vitrine { width: 100%; max-width: 360px; aspect-ratio: 1; margin: 0 auto; }
 .humores { display: flex; flex-wrap: wrap; gap: 8px; }
 .humores .botao { flex: 1 1 40%; }

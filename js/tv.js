@@ -22,6 +22,7 @@
   var processadas = {};
   var fila = Promise.resolve();
 
+  ECO.criar(document.getElementById('ecoSala')).humor('esperando');
   document.getElementById('codigo').textContent = sala;
   document.getElementById('link').textContent = link;
   document.getElementById('chipSala').textContent = 'sala ' + sala;
@@ -358,37 +359,71 @@
       var ph = '';
       estado.resultado.forEach(function (r, i) {
         ph += '<div class="lugar' + (i === 0 ? ' primeiro' : '') + '" style="--c:' + r.cor + '">' +
+          '<div class="lugar-eco" id="ecoFim' + i + '"></div>' +
           '<div class="pos">' + (i + 1) + 'º</div><div class="nome">' + esc(r.nome) + '</div>' +
           '<div class="nota">' + r.nota + '</div><div class="titulo">' + esc(KA.titulo(r.nota)) + '</div>' +
           '<div class="stats"><span>No tempo ' + r.pres + '%</span><span>Afinação ' + r.afin + '%</span></div></div>';
       });
       document.getElementById('podio').innerHTML = ph || '<p class="dica">Ninguém cantou.</p>';
+      estado.resultado.forEach(function (r, i) {
+        var e = ECO.criar(document.getElementById('ecoFim' + i));
+        e.humor(ECO.humorDaNota(r.nota));
+        e.boca(r.nota >= 55 ? 0.9 : 0.4);
+      });
     }
     desenharCantores();
   }
 
+  // cartões dos cantores: criados uma vez por cantor (o Eco de cada um continua animando)
+  var cartoes = {};
   function desenharCantores() {
-    var html = '';
-    estado.jogadores.forEach(function (j) {
+    var lista = document.getElementById('cantores');
+    var tags = {};
+    estado.jogadores.forEach(function (j, i) {
+      tags[j.tag] = true;
+      var c = cartoes[j.tag];
+      if (!c) {
+        var el = document.createElement('div');
+        el.className = 'cantor';
+        el.innerHTML = '<div class="cantor-eco"></div><div class="cantor-info">' +
+          '<div class="cantor-topo"><span class="nome"></span><span class="pts"></span></div>' +
+          '<div class="medidor"><div class="nivel"></div></div><div class="elogio"></div></div>';
+        c = cartoes[j.tag] = {
+          el: el, eco: ECO.criar(el.querySelector('.cantor-eco')),
+          nome: el.querySelector('.nome'), pts: el.querySelector('.pts'), nivel: el.querySelector('.nivel'), elogio: el.querySelector('.elogio'),
+          ultima: null, humorAte: 0, humorLinha: 0,
+        };
+      }
+      if (lista.children[i] !== c.el) lista.insertBefore(c.el, lista.children[i] || null);
+      c.el.style.setProperty('--c', j.cor);
+      c.nome.textContent = j.nome;
       var p = estado.placar[j.tag];
-      var media = p && p.linhas ? Math.round(p.soma / p.linhas) : 0;
-      var ult = p && p.ultima;
-      html += '<div class="cantor" style="--c:' + j.cor + '">' +
-        '<div class="cantor-topo"><span class="bola"></span><span class="nome">' + esc(j.nome) + '</span><span class="pts">' + media + '</span></div>' +
-        '<div class="medidor"><div class="nivel" id="nivel_' + j.tag + '"></div></div>' +
-        '<div class="elogio" id="elogio_' + j.tag + '">' + (ult ? esc(ult.txt) : '') + '</div></div>';
-    });
-    document.getElementById('cantores').innerHTML = html;
-    estado.jogadores.forEach(function (j) {
-      var p = estado.placar[j.tag];
-      var el = document.getElementById('elogio_' + j.tag);
-      if (p && p.ultima && el && desenharCantores.ultimo[j.tag] !== p.ultima.i) {
-        desenharCantores.ultimo[j.tag] = p.ultima.i;
-        el.className = 'elogio mostra ' + (p.ultima.nota >= 65 ? 'bom' : p.ultima.nota >= 40 ? 'ok' : 'ruim');
+      c.pts.textContent = p && p.linhas ? Math.round(p.soma / p.linhas) : 0;
+      if (p && p.ultima && c.ultima !== p.ultima.i) {
+        c.ultima = p.ultima.i;
+        c.elogio.textContent = p.ultima.txt;
+        c.elogio.className = 'elogio';
+        void c.elogio.offsetWidth; // reinicia a animação
+        c.elogio.className = 'elogio mostra ' + (p.ultima.nota >= 65 ? 'bom' : p.ultima.nota >= 40 ? 'ok' : 'ruim');
+        c.humorLinha = ECO.humorDaNota(p.ultima.nota);
+        c.humorAte = Date.now() + 3000;
       }
     });
+    for (var t in cartoes) {
+      if (!tags[t]) {
+        lista.removeChild(cartoes[t].el);
+        delete cartoes[t];
+      }
+    }
   }
-  desenharCantores.ultimo = {};
+
+  // humor do Eco de cada cantor: a última linha por 3 s; depois, se está cantando ou não
+  function humorCantor(c, voz) {
+    if (estado.fase === 'sala') return ECO.HUMOR.esperando;
+    if (estado.fase !== 'cantando') return ECO.HUMOR.normal;
+    if (c.humorAte > Date.now()) return c.humorLinha;
+    return voz > 0.25 ? ECO.HUMOR.normal : ECO.HUMOR.esperando;
+  }
 
   // letra: linha anterior, a atual enchendo de cor e as próximas
   var letraEl = document.getElementById('letra');
@@ -499,15 +534,26 @@
         ctx.stroke();
       });
       ctx.globalAlpha = 1;
-      // medidor de "está cantando agora"
-      var el = document.getElementById('nivel_' + j.tag);
-      if (el) {
+      // medidor de "está cantando agora" e o Eco do cantor
+      var c = cartoes[j.tag];
+      if (c) {
         var voz = 0, tot = 0;
         for (var q = rs.length - 1; q >= 0 && rs[q][0] > fimJ - 600; q--) {
           tot++;
           if (rs[q][1]) voz++;
         }
-        el.style.width = (tot ? Math.round((100 * voz) / tot) : 0) + '%';
+        var frac = tot ? voz / tot : 0;
+        c.nivel.style.width = Math.round(100 * frac) + '%';
+        c.eco.humor(humorCantor(c, frac));
+        c.eco.boca(0.2 + 0.7 * frac);
+      }
+    });
+    // quem ainda não mandou voz nenhuma
+    estado.jogadores.forEach(function (j) {
+      var c = cartoes[j.tag];
+      if (c && !rastro[j.tag]) {
+        c.eco.humor(humorCantor(c, 0));
+        c.nivel.style.width = '0%';
       }
     });
   }

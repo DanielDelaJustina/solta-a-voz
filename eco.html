@@ -15,23 +15,17 @@
   <main>
     <div class="marca">Eco</div>
     <p>O mascote do Solta a Voz. Ele muda de cara conforme você canta.</p>
-    <canvas id="eco" class="eco-vitrine" width="600" height="600"></canvas>
-    <p class="chip" id="statusEco" style="align-self:center"></p>
+    <div id="eco" class="eco-vitrine"></div>
     <div class="cartao">
       <div class="humores" id="humores"></div>
       <div class="rotulo">Boca (volume da voz)</div>
-      <input type="range" id="boca" min="0" max="100" value="20">
+      <input type="range" id="boca" min="0" max="100" value="35">
     </div>
     <a class="botao fantasma" href="./">← Voltar</a>
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/@rive-app/canvas@2.45.0/rive.js"></script>
   <script src="js/eco.js"></script>
   <script>
-    var avisoEco = document.getElementById('statusEco');
-    avisoEco.textContent = window.rive ? 'Carregando o Eco…' : 'O Rive não carregou neste navegador.';
-    var eco = ECO.criar(document.getElementById('eco'), function (ok) {
-      avisoEco.textContent = ok ? 'Rive funcionando neste navegador ✔' : 'O Rive não conseguiu abrir o Eco neste navegador.';
-    });
+    var eco = ECO.criar(document.getElementById('eco'));
     var nomes = [['normal', 'Normal'], ['esperando', 'Vem cantar!'], ['animado', 'Tá mandando bem!'], ['desafinado', 'Quase lá! Ajusta o tom!'], ['astro', 'Nível Astro!'], ['procurando', 'Cadê você?']];
     var html = '';
     nomes.forEach(function (n) { html += '<button class="botao sec mini" data-h="' + n[0] + '">' + n[1] + '</button>'; });

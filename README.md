@@ -12,6 +12,21 @@ Site: https://danieldelajustina.github.io/solta-a-voz/
 4. Quem entrou primeiro escolhe a música: busca pelo nome, abre o YouTube para achar uma versão karaokê e cola o link.
 5. Durante a música, ele pode pausar, terminar e ajustar o tempo da letra ("Letra antes" / "Letra depois").
 
+## Eco, o mascote
+
+O Eco é um microfone com fone de ouvido que muda de cara conforme a pessoa canta. Ele aparece no celular, no lugar do microfone, e na TV, no cartão de cada cantor, na entrada e no resultado.
+
+| Humor | Quando aparece |
+|---|---|
+| Esperando | Microfone desligado ou em silêncio |
+| Normal | Cantando |
+| Animado | Voz bem no centro das notas, ou linha "Muito bom!" |
+| Desafinado | Voz entre as notas, ou linha "Errou": tapa os ouvidos |
+| Astro | Linha "Perfeito!" e nota final 85 ou mais: óculos de estrela |
+| Procurando | Olha para os lados (reservado) |
+
+O desenho é SVG com animações CSS (`js/eco.js` e a seção "Eco" de `css/estilo.css`), leve o bastante para a TV. O arquivo `assets/eco.riv` é o mesmo desenho feito no Rive, guardado como referência: exportado no plano grátis, ele sai com marca d'água, por isso o site não o usa. Veja todas as caras em `eco.html`.
+
 ## Direitos autorais
 
 O repositório não guarda nenhuma letra nem áudio:

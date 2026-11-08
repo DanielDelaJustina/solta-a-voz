@@ -12,6 +12,7 @@
   var amostras = [], seq = 0, rnd = Math.random().toString(36).slice(2, 6);
   var modoAtual = '';
   var busca = { termo: '', itens: null, carregando: false, escolhida: null };
+  var eco = null, janela = [], humorAlvo = 0, humorPendente = -1, astroAte = 0, ruimAte = 0, silencioDesde = 0;
   var NOTAS = ['Dó', 'Dó#', 'Ré', 'Ré#', 'Mi', 'Fá', 'Fá#', 'Sol', 'Sol#', 'Lá', 'Lá#', 'Si'];
 
   if (!/^[A-Z0-9]{5}$/.test(sala)) {
@@ -77,12 +78,14 @@
       var t = Math.round(FB.agora() - publico.relogio.inicio);
       amostras.push(t + ',' + Math.round(m.midi * 100));
     }
-    var orbe = document.getElementById('orbe');
-    if (!orbe) return;
-    var hue = m.midi ? Math.round(190 + ((((Math.round(m.midi) % 12) + 12) % 12) / 11) * 100) : 230;
-    orbe.style.transform = 'scale(' + (0.86 + m.nivel * 0.3).toFixed(3) + ')';
-    orbe.style.setProperty('--h', hue);
+    // último segundo de voz, para o humor do Eco
+    janela.push(m.midi);
+    if (janela.length > 20) janela.shift();
+    if (m.midi) silencioDesde = 0;
+    else if (!silencioDesde) silencioDesde = Date.now();
+    if (eco) eco.boca(m.midi ? 0.35 + 0.65 * m.nivel : 0.2);
     var nota = document.getElementById('nota');
+    if (!nota) return;
     var agulha = document.getElementById('agulha');
     if (m.midi) {
       var perto = Math.round(m.midi);
@@ -95,6 +98,43 @@
       agulha.className = 'agulha apagada';
     }
   }
+
+  // humor do Eco: o que a voz está fazendo agora + o resultado da última linha
+  function humorAgora() {
+    var H = ECO.HUMOR;
+    if (!micLigado || !publico) return H.esperando;
+    var f = publico.fase;
+    if (f === 'fim') {
+      var r = (publico.resultado || []).filter(function (x) { return x.tag === tag; })[0];
+      return r ? ECO.humorDaNota(r.nota) : H.normal;
+    }
+    if (f !== 'cantando' || (publico.relogio && publico.relogio.pausado)) return H.normal;
+    var agora = Date.now();
+    if (astroAte > agora) return H.astro;
+    var voz = 0, desvio = 0;
+    janela.forEach(function (m) {
+      if (!m) return;
+      voz++;
+      desvio += Math.abs((m - Math.round(m)) * 100);
+    });
+    if (voz >= 6) {
+      desvio /= voz;
+      if (desvio > 21 || ruimAte > agora) return H.desafinado;
+      return desvio < 13 ? H.animado : H.normal;
+    }
+    if (ruimAte > agora) return H.desafinado;
+    return silencioDesde && agora - silencioDesde > 3000 ? H.esperando : H.normal;
+  }
+  // só troca de cara quando o novo humor se repete (evita o Eco piscando de uma cara para outra)
+  setInterval(function () {
+    if (!eco) return;
+    var h = humorAgora();
+    if (h !== humorAlvo && h === humorPendente) {
+      humorAlvo = h;
+      eco.humor(h);
+    }
+    humorPendente = h;
+  }, 250);
 
   setInterval(function () {
     if (!amostras.length) return;
@@ -242,7 +282,7 @@
   // ---------- telas ----------
   function painelMic() {
     return '<button class="orbe-area" data-op="mic">' +
-      '<div class="orbe' + (micLigado ? ' ligado' : '') + '" id="orbe"><div class="nota" id="nota">' + (micLigado ? '·' : '🎤') + '</div></div></button>' +
+      '<div class="eco-cel" id="ecoCel"></div><span class="nota-chip' + (micLigado ? '' : ' ligar') + '" id="nota">' + (micLigado ? '·' : '🎤 Toque para ligar') + '</span></button>' +
       '<div class="estado-mic" id="estadoMic"></div>' +
       '<div class="afinacao' + (micLigado ? '' : ' hidden') + '"><span>♭</span><div class="regua"><div class="centro"></div><div class="agulha apagada" id="agulha"></div></div><span>♯</span></div>' +
       '<div class="placar-cel"><div><div class="rotulo">Sua nota</div><div class="pts" id="minhaNota">–</div></div><div class="elogio" id="meuElogio"></div></div>';
@@ -285,6 +325,10 @@
         html += '<div class="linha-botoes rodape"><button class="botao fantasma" data-op="nome">Mudar nome</button><button class="botao fantasma" data-op="sair">Sair</button></div>';
       }
       tela.innerHTML = html;
+      var lugarEco = document.getElementById('ecoCel');
+      eco = lugarEco ? ECO.criar(lugarEco) : null;
+      humorAlvo = 0;
+      if (eco) eco.humor(humorAgora());
       desenharBusca();
     }
     atualizarDetalhes(idx);
@@ -304,6 +348,8 @@
     var el2 = document.getElementById('meuElogio');
     if (el2 && p && p.ultima && atualizarDetalhes.ultima !== p.ultima.i) {
       atualizarDetalhes.ultima = p.ultima.i;
+      if (p.ultima.nota >= 85) astroAte = Date.now() + 2500;
+      else if (p.ultima.nota < 30) ruimAte = Date.now() + 2000;
       el2.textContent = p.ultima.txt;
       el2.className = 'elogio mostra ' + (p.ultima.nota >= 65 ? 'bom' : p.ultima.nota >= 40 ? 'ok' : 'ruim');
     }
@@ -312,7 +358,7 @@
     var em = document.getElementById('estadoMic');
     if (em) {
       var m = publico.musica;
-      em.innerHTML = !micLigado ? 'Toque no microfone para ligar'
+      em.innerHTML = !micLigado ? 'Toque no Eco para ligar o microfone'
         : f === 'cantando' ? (publico.relogio && publico.relogio.pausado ? 'Pausado' : 'Cante! <small>' + esc(m.titulo) + '</small>')
         : f === 'preparando' ? 'Prepare-se…'
         : f === 'fim' ? (function () {
