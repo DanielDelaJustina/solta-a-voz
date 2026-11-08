@@ -93,7 +93,10 @@ button { font-family: inherit; }
 .grafico .rotulo { position: absolute; left: 1.2vw; top: 0.8vw; }
 .grafico canvas { width: 100%; height: 100%; display: block; }
 
-.video { overflow: hidden; height: 16.875vw; padding: 0; }
+.video { overflow: hidden; height: 16.875vw; padding: 0; transition: all 0.5s ease; }
+/* antes da letra começar (propaganda e abertura), o vídeo fica grande no meio da tela */
+.video-grande .video { overflow: visible; position: fixed; z-index: 4; left: 14vw; top: 9vh; width: 72vw; height: 40.5vw; box-shadow: 0 0 80px rgba(168, 85, 247, 0.45); }
+.video-grande .video::after { content: "Se aparecer propaganda, aperte Pular no canto do vídeo"; position: absolute; left: 0; right: 0; bottom: -2.6vw; text-align: center; color: var(--suave); font-size: 1.3vw; }
 .video iframe, .video #video { width: 100%; height: 100%; display: block; border: 0; }
 
 .cantores { display: flex; flex-direction: column; gap: 0.9vw; overflow: hidden; }
@@ -229,6 +232,19 @@ button { font-family: inherit; }
 .placar-cel .pts { font-size: 34px; font-weight: 800; color: var(--c); line-height: 1.1; }
 .placar-cel .elogio { font-size: 24px; }
 .controles .rotulo { margin-top: 4px; }
+
+/* vídeos sugeridos */
+.video-item {
+  display: grid; grid-template-columns: 112px 1fr; grid-template-rows: auto auto; column-gap: 10px; row-gap: 2px; align-items: start;
+  width: 100%; text-align: left; font: inherit; color: var(--texto); cursor: pointer;
+  background: rgba(7, 11, 31, 0.45); border: 1px solid var(--borda); border-radius: 12px; padding: 8px;
+}
+.video-item img { grid-row: 1 / 3; width: 112px; height: 63px; object-fit: cover; border-radius: 8px; background: #000; }
+.video-item .vt { font-weight: 600; font-size: 14px; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.video-item .va { color: var(--suave); font-size: 12px; }
+.video-item.sel { border: 2px solid var(--c); box-shadow: 0 0 18px rgba(34, 211, 238, 0.35); background: rgba(34, 211, 238, 0.08); }
+.outro-video summary { color: var(--suave); cursor: pointer; padding: 6px 0; }
+.outro-video[open] { display: flex; flex-direction: column; gap: 10px; }
 
 /* página inicial */
 .inicio { overflow-y: auto; }

@@ -566,6 +566,12 @@
       // terminou a letra: dá um respiro e mostra o resultado
       if (linhas.length && proxFinal >= linhas.length) terminar();
     }
+    // vídeo grande até a letra começar: propaganda e abertura ficam fáceis de ver e de pular com o controle
+    var grande = (estado.fase === 'preparando' || cantando) && linhas.length && T - estado.ajuste < linhas[0].ini - 2500;
+    if (grande !== quadro.grande) {
+      quadro.grande = grande;
+      document.body.classList.toggle('video-grande', !!grande);
+    }
     desenharLetra(T - estado.ajuste);
     desenharGrafico(T);
     requestAnimationFrame(quadro);
