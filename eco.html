@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070b1f">
+  <title>Solta a Voz · Eco</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body class="cel inicio">
+  <div class="brilho b1"></div>
+  <div class="brilho b2"></div>
+  <main>
+    <div class="marca">Eco</div>
+    <p>O mascote do Solta a Voz. Ele muda de cara conforme você canta.</p>
+    <canvas id="eco" class="eco-vitrine" width="600" height="600"></canvas>
+    <p class="chip" id="statusEco" style="align-self:center"></p>
+    <div class="cartao">
+      <div class="humores" id="humores"></div>
+      <div class="rotulo">Boca (volume da voz)</div>
+      <input type="range" id="boca" min="0" max="100" value="20">
+    </div>
+    <a class="botao fantasma" href="./">← Voltar</a>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@rive-app/canvas@2.45.0/rive.js"></script>
+  <script src="js/eco.js"></script>
+  <script>
+    var status = document.getElementById('statusEco');
+    status.textContent = window.rive ? 'Carregando o Eco…' : 'O Rive não carregou neste navegador.';
+    var eco = ECO.criar(document.getElementById('eco'), function (ok) {
+      status.textContent = ok ? 'Rive funcionando neste navegador ✔' : 'O Rive não conseguiu abrir o Eco neste navegador.';
+    });
+    var nomes = [['normal', 'Normal'], ['esperando', 'Vem cantar!'], ['animado', 'Tá mandando bem!'], ['desafinado', 'Quase lá! Ajusta o tom!'], ['astro', 'Nível Astro!'], ['procurando', 'Cadê você?']];
+    var html = '';
+    nomes.forEach(function (n) { html += '<button class="botao sec mini" data-h="' + n[0] + '">' + n[1] + '</button>'; });
+    document.getElementById('humores').innerHTML = html;
+    document.getElementById('humores').onclick = function (e) {
+      var h = e.target.getAttribute('data-h');
+      if (h) eco.humor(h);
+    };
+    document.getElementById('boca').oninput = function () { eco.boca(this.value / 100); };
+  </script>
+</body>
+</html>

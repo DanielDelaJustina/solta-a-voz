@@ -237,3 +237,8 @@ button { font-family: inherit; }
 .inicio .cartao { padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 10px; }
 .inicio h2 { margin: 0; font-size: 19px; }
 .inicio p { margin: 0; color: var(--suave); line-height: 1.45; }
+
+/* Eco, o mascote */
+.eco-vitrine { width: 100%; max-width: 360px; aspect-ratio: 1; margin: 0 auto; display: block; }
+.humores { display: flex; flex-wrap: wrap; gap: 8px; }
+.humores .botao { flex: 1 1 40%; }
